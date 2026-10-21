@@ -1,0 +1,13 @@
+---
+import { formatDate } from '../lib/site';
+
+interface Props {
+  date: Date;
+}
+const { day, month, year } = formatDate(Astro.props.date);
+---
+
+<time class="date-badge" datetime={Astro.props.date.toISOString()}>
+  <span class="day">{day}</span>
+  {month}月 {year}
+</time>

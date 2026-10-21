@@ -1,0 +1,37 @@
+---
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../../../layouts/Base.astro';
+import DateBadge from '../../../../components/DateBadge.astro';
+import { excerpt, getPosts, postPath, url } from '../../../../lib/site';
+
+// 旧WordPressの /YYYY/MM/DD/<slug>/ をそのまま維持する
+export const getStaticPaths = (async () => {
+  const posts = await getPosts();
+  return posts.map((post, i) => {
+    const [year, month, day, ...rest] = post.data.permalink.split('/');
+    return {
+      params: { year, month, day, slug: rest.join('/') },
+      props: { post, newer: posts[i - 1], older: posts[i + 1] },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { post, newer, older } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Base title={post.data.title} description={excerpt(post.body, 120)} image={post.data.thumbnail} type="article">
+  <div class="container page">
+    <article class="post">
+      <DateBadge date={post.data.date} />
+      <h1 class="page-title">{post.data.title}</h1>
+      <p class="post-cats">{post.data.categories.join(' / ')}</p>
+      <div class="prose"><Content /></div>
+    </article>
+    <nav class="post-nav" aria-label="記事ナビゲーション">
+      {older ? <a class="older" href={url(postPath(older.data.permalink))}>← {older.data.title}</a> : <span />}
+      {newer ? <a class="newer" href={url(postPath(newer.data.permalink))}>{newer.data.title} →</a> : <span />}
+    </nav>
+  </div>
+</Base>

@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getProducts, productPath, url } from '../../lib/site';
+
+const products = await getProducts();
+---
+
+<Base title="ボードゲーム作品" description="ファンブルワールスが制作したボードゲーム/カードゲームの一覧です．">
+  <div class="container page">
+    <h1 class="page-title">ボードゲーム作品</h1>
+    <ul class="card-grid">
+      {
+        products.map((p) => (
+          <li>
+            <a href={url(productPath(p.data.permalink))}>
+              <img src={url(p.data.thumbnail)} alt={p.data.title} loading="lazy" />
+              <h3>{p.data.title}</h3>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>

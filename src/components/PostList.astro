@@ -1,0 +1,25 @@
+---
+// 新着記事 / ブログ一覧で共通の記事カード
+import type { CollectionEntry } from 'astro:content';
+import DateBadge from './DateBadge.astro';
+import { excerpt, postPath, url } from '../lib/site';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  thumbSize?: number;
+}
+const { post, thumbSize = 270 } = Astro.props;
+const href = url(postPath(post.data.permalink));
+---
+
+<article class="post-card">
+  <a class="post-thumb" href={href} style={`--size: ${thumbSize}px`}>
+    <img src={url(post.data.thumbnail ?? '/uploads/noImage_catch.png')} alt="" loading="lazy" />
+  </a>
+  <div class="post-text">
+    <DateBadge date={post.data.date} />
+    <h3><a href={href}>{post.data.title}</a></h3>
+    <p class="post-cats">{post.data.categories.join(' / ')}</p>
+    <p>{excerpt(post.body)} <a class="more" href={href}>READ MORE</a></p>
+  </div>
+</article>

@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostList from '../../components/PostList.astro';
+import { getPosts } from '../../lib/site';
+
+const posts = await getPosts();
+---
+
+<Base title="ブログ" description="ファンブルワールスからのお知らせ・イベント参加情報です．">
+  <div class="container page">
+    <h1 class="page-title">ブログ</h1>
+    <div class="post-list">
+      {posts.map((post) => <PostList post={post} thumbSize={365} />)}
+    </div>
+  </div>
+</Base>

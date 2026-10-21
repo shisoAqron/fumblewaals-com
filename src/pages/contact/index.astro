@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import { SITE, url } from '../../lib/site';
+---
+
+<Base title="コンタクト" description="ファンブルワールスへのお問い合わせ方法です．">
+  <div class="container page">
+    <h1 class="page-title">コンタクト</h1>
+    <div class="prose">
+      <p>
+        弊サークルが作成したゲームのルールに関してのご質問や，プレイしたご感想などがございましたら，お気軽にご連絡ください．<br />
+        Twitter(<a href={SITE.twitter}>{SITE.twitterHandle}</a>)のダイレクトメッセージによるお問い合わせも承っております．<br />
+        スマートフォンからメールを送信する場合は，以下のQRコードから弊サークルのメールアドレス（<a href={`mailto:${SITE.email}`}>{SITE.email}</a>）を読み取ることができます．
+      </p>
+      <p><img src={url('/uploads/qr20170902211829593.png')} alt="メールアドレスのQRコード" width="250" height="250" /></p>
+      <p><a class="btn" href={`mailto:${SITE.email}`}>メールを送る</a></p>
+    </div>
+  </div>
+</Base>

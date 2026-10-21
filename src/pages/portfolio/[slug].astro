@@ -1,0 +1,46 @@
+---
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import { excerpt, getProducts, url } from '../../lib/site';
+
+export const getStaticPaths = (async () => {
+  const products = await getProducts();
+  return products.map((product) => ({ params: { slug: product.data.permalink }, props: { product } }));
+}) satisfies GetStaticPaths;
+
+const { product } = Astro.props;
+const { Content } = await render(product);
+const { title, gallery, details, thumbnail } = product.data;
+---
+
+<Base title={title} description={excerpt(product.body, 120)} image={thumbnail}>
+  <div class="container page">
+    <h1 class="page-title">{title}</h1>
+    <div class="product">
+      <div class="product-gallery">
+        {
+          gallery.map((src) => (
+            <a href={url(src)} target="_blank" rel="noopener">
+              <img src={url(src)} alt={title} loading="lazy" />
+            </a>
+          ))
+        }
+      </div>
+      <div class="product-body">
+        <div class="prose"><Content /></div>
+        {
+          details.length > 0 && (
+            <ul class="product-details">
+              {details.map((d) => (
+                <li>
+                  <span>{d.label}</span> {d.value}
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</Base>

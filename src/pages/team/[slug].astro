@@ -1,0 +1,33 @@
+---
+import { render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import Base from '../../layouts/Base.astro';
+import { excerpt, getMembers, url } from '../../lib/site';
+
+export const getStaticPaths = (async () => {
+  const members = await getMembers();
+  return members.map((member) => ({ params: { slug: member.data.permalink }, props: { member } }));
+}) satisfies GetStaticPaths;
+
+const { member } = Astro.props;
+const { Content } = await render(member);
+const { name, role, image, twitter, location, url: site } = member.data;
+---
+
+<Base title={name} description={excerpt(member.body, 120) || undefined}>
+  <div class="container page">
+    <div class="member">
+      <img src={url(image ?? '/uploads/noImage_catch.png')} alt={name} />
+      <div>
+        <h1>{name}</h1>
+        {role && <p class="role">{role}</p>}
+        <div class="prose"><Content /></div>
+        <ul class="member-links">
+          {location && <li><strong>Location:</strong> {location}</li>}
+          {site && <li><strong>URL:</strong> <a href={site} target="_blank" rel="noopener">{site}</a></li>}
+          {twitter && <li><a href={twitter} target="_blank" rel="noopener">Twitter</a></li>}
+        </ul>
+      </div>
+    </div>
+  </div>
+</Base>

@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import { excerpt, getMembers, memberPath, url } from '../../lib/site';
+
+const members = await getMembers();
+---
+
+<Base title="メンバー" description="ファンブルワールスのメンバー紹介です．">
+  <div class="container page">
+    <h1 class="page-title">メンバー</h1>
+    <ul class="member-grid">
+      {
+        members.map((m) => (
+          <li class="member-card">
+            <a href={url(memberPath(m.data.permalink))}>
+              <img src={url(m.data.image ?? '/uploads/noImage_catch.png')} alt={m.data.name} loading="lazy" />
+            </a>
+            <div>
+              <h3>
+                <a href={url(memberPath(m.data.permalink))}>{m.data.name}</a>
+              </h3>
+              {m.data.role && <p class="role">{m.data.role}</p>}
+              <p>{excerpt(m.body, 60)}</p>
+              {m.data.twitter && (
+                <a href={m.data.twitter} target="_blank" rel="noopener">
+                  Twitter
+                </a>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</Base>

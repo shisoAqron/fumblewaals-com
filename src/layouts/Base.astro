@@ -1,0 +1,83 @@
+---
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import { NAV, SITE, url } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+}
+
+const { title, description = SITE.description, image = SITE.ogImage, type = 'website' } = Astro.props;
+const pageTitle = title ? `${title} | ${SITE.name}` : SITE.name;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL(url(image), Astro.site);
+const pathname = Astro.url.pathname;
+const isCurrent = (href: string) => pathname.startsWith(url(href));
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'fumblewaals',
+  url: new URL(url('/'), Astro.site).href,
+  logo: new URL(url('/uploads/2017/08/fumblewaalsLogo.png'), Astro.site).href,
+  sameAs: [SITE.twitter],
+};
+---
+
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={url(SITE.ogImage)} />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title ?? SITE.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content={SITE.twitterHandle} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to Main Content</a>
+    <div class="topbar">
+      <div class="container topbar-inner">
+        <a href={SITE.twitter} target="_blank" rel="noopener">Twitter {SITE.twitterHandle}</a>
+      </div>
+    </div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href={url('/')}>{SITE.name}</a>
+        <nav class="main-nav" aria-label="メインメニュー">
+          <ul>
+            {
+              NAV.map((item) => (
+                <li>
+                  <a href={url(item.href)} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="content">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

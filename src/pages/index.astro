@@ -1,0 +1,47 @@
+---
+import Base from '../layouts/Base.astro';
+import PostList from '../components/PostList.astro';
+import { getPosts, getProducts, productPath, url } from '../lib/site';
+
+const products = await getProducts();
+const posts = (await getPosts()).slice(0, 4);
+---
+
+<Base>
+  <div class="container hero">
+    <img src={url('/uploads/2017/09/topSlider_02-01-1.png')} alt="" width="1170" height="400" fetchpriority="high" />
+  </div>
+
+  <div class="container">
+    <section class="home-section">
+      <h2 class="section-title">ボードゲーム作品</h2>
+      <div class="carousel" data-carousel data-interval="9000">
+        <button class="carousel-btn prev" type="button" aria-label="前へ" data-prev>‹</button>
+        <ul class="carousel-track" data-track>
+          {
+            products.map((p) => (
+              <li class="carousel-item">
+                <a href={url(productPath(p.data.permalink))} title={p.data.title}>
+                  <img src={url(p.data.thumbnail)} alt={p.data.title} loading="lazy" />
+                  <h3>{p.data.title}</h3>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <button class="carousel-btn next" type="button" aria-label="次へ" data-next>›</button>
+      </div>
+    </section>
+
+    <section class="home-section">
+      <h2 class="section-title">新着記事</h2>
+      <div class="post-grid">
+        {posts.map((post) => <PostList post={post} />)}
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  import '../scripts/carousel';
+</script>
